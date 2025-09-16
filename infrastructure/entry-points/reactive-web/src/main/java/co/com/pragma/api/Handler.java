@@ -16,14 +16,4 @@ public class Handler {
     public Mono<ServerResponse> obtenerReporte(ServerRequest serverRequest) {
         return obtenerReporteHandler.ejecutar(serverRequest);
     }
-
-//    public Mono<ServerResponse> listenGETOtherUseCase(ServerRequest serverRequest) {
-//        // useCase2.logic();
-//        return ServerResponse.ok().bodyValue("");
-//    }
-//
-//    public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
-//        // useCase.logic();
-//        return ServerResponse.ok().bodyValue("");
-//    }
 }

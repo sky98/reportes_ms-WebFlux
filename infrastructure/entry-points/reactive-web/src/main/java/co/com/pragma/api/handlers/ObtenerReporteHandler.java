@@ -1,5 +1,6 @@
 package co.com.pragma.api.handlers;
 
+import co.com.pragma.api.ReporteMapper;
 import co.com.pragma.usecase.obtenerreporte.ObtenerReporteUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +16,11 @@ import reactor.core.publisher.Mono;
 public class ObtenerReporteHandler {
 
     private final ObtenerReporteUseCase useCase;
+    private final ReporteMapper reporteMapper;
 
     public Mono<ServerResponse> ejecutar(ServerRequest serverRequest){
         return useCase.ejecutar()
+                .map(reporteMapper::toResponse)
                 .flatMap(response -> {
                     log.info("Se proceso con exito la solicitud de reporte.");
                     return ServerResponse.ok()

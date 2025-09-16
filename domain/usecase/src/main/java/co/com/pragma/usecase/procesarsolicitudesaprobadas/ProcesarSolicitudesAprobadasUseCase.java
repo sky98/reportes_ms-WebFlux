@@ -7,7 +7,7 @@ import co.com.pragma.model.reporte.gateways.ReporteRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
+import java.math.BigDecimal;
 
 @RequiredArgsConstructor
 public class ProcesarSolicitudesAprobadasUseCase {
@@ -17,13 +17,18 @@ public class ProcesarSolicitudesAprobadasUseCase {
 
     public Mono<Reporte> ejecutar(String messageBody){
         return mensajeUtilsGateway.deserializarMensaje(messageBody, SolicitudAprobadaMensaje.class)
-                .flatMap(solicitud -> reporteRepository.guardar(
-                        Reporte.builder()
-                                .id(UUID.randomUUID().toString())
-                                .cantidad(1)
-                                .monto(solicitud.getMonto())
-                                .build()
-                ));
+                .flatMap(solicitud ->
+                        reporteRepository.obtenerReportes()
+                                .flatMap(reporte -> reporteRepository.guardar(
+                                        actualizarReporte(reporte, solicitud.getMonto())
+                                ))
+                );
+    }
+
+    private Reporte actualizarReporte(Reporte reporte, BigDecimal monto){
+        reporte.setMonto(monto.add(reporte.getMonto()));
+        reporte.setCantidad(reporte.getCantidad() + 1);
+        return reporte;
     }
 
 
