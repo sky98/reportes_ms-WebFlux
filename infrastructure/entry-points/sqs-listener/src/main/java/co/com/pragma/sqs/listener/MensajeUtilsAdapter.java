@@ -32,7 +32,7 @@ public class MensajeUtilsAdapter implements MensajeUtilsGateway {
 
     @Override
     public <T> Mono<T> deserializarMensaje(String messageBody, Class<T> targetClass) {
-        log.info("DEserializando : {}", messageBody);
+        log.info("Deserializando : {}", messageBody);
         return Mono.fromCallable(() -> {
             try {
                 return objectMapper.readValue(messageBody, targetClass);

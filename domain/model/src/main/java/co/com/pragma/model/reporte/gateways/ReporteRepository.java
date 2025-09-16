@@ -4,6 +4,6 @@ import co.com.pragma.model.reporte.Reporte;
 import reactor.core.publisher.Mono;
 
 public interface ReporteRepository {
-    Mono<Reporte> obtenerReporte();
+    Mono<Reporte> obtenerReportes();
     Mono<Reporte> guardar(Reporte reporte);
 }
