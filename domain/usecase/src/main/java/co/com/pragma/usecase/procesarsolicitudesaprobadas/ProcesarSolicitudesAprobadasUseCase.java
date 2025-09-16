@@ -9,8 +9,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ProcesarSolicitudesAprobadasUseCase {
 
-    private final ReporteRepository reporteRepository;
-    private final MensajeUtilsGateway mensajeUtilsGateway;
+    //private final ReporteRepository reporteRepository;
+    //private final MensajeUtilsGateway mensajeUtilsGateway;
 
     public Mono<Reporte> ejecutar(String messageBody){
         return null;
