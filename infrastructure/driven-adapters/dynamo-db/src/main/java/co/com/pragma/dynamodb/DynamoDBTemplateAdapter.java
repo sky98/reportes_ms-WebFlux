@@ -1,8 +1,10 @@
 package co.com.pragma.dynamodb;
 
 import co.com.pragma.dynamodb.helper.TemplateAdapterOperations;
+import co.com.pragma.model.errores.ErrorPersistencia;
 import co.com.pragma.model.reporte.Reporte;
 import co.com.pragma.model.reporte.gateways.ReporteRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
@@ -12,7 +14,9 @@ import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 
 import java.util.List;
+import java.util.Set;
 
+@Slf4j
 @Repository
 public class DynamoDBTemplateAdapter extends TemplateAdapterOperations<Reporte, String, ModelEntity> implements ReporteRepository {
 
@@ -44,11 +48,20 @@ public class DynamoDBTemplateAdapter extends TemplateAdapterOperations<Reporte, 
 
     @Override
     public Mono<Reporte> obtenerReportes() {
-        return null;
+        return super.scan()
+                .flatMap(reportes -> {
+                    return reportes.isEmpty()
+                            ? Mono.empty()
+                            : Mono.just(reportes.get(0));
+                });
     }
 
     @Override
     public Mono<Reporte> guardar(Reporte reporte) {
-        return super.save(reporte);
+        return super.save(reporte)
+                .onErrorResume(e -> {
+                    log.error("Se presento un error al guardar reporte : {}", e.getMessage());
+                    return Mono.defer(() ->Mono.error(new ErrorPersistencia("Se presento un error al guardar el reporte.", Set.of(e.getMessage()))));
+                });
     }
 }
