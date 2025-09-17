@@ -1,6 +1,6 @@
 package co.com.pragma.api;
 
-import co.com.pragma.api.handlers.ObtenerReporteHandler;
+import co.com.pragma.api.handlers.usecase.ObtenerReporteHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;

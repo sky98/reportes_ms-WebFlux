@@ -2,25 +2,28 @@ package co.com.pragma.dynamodb.helper;
 
 import co.com.pragma.dynamodb.DynamoDBTemplateAdapter;
 import co.com.pragma.dynamodb.ModelEntity;
+import co.com.pragma.model.reporte.Reporte;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-
 import java.math.BigDecimal;
 import java.util.concurrent.CompletableFuture;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class TemplateAdapterOperationsTest {
 
     @Mock
@@ -34,11 +37,15 @@ class TemplateAdapterOperationsTest {
 
     private ModelEntity modelEntity;
 
+    private Reporte reporte = Reporte.builder()
+            .id("123456")
+            .cantidad(1)
+            .monto(BigDecimal.TEN)
+            .build();
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        when(dynamoDbEnhancedAsyncClient.table("table_name", TableSchema.fromBean(ModelEntity.class)))
+        when(dynamoDbEnhancedAsyncClient.table(any(String.class), any(TableSchema.class)))
                 .thenReturn(customerTable);
 
         modelEntity = new ModelEntity();
@@ -47,56 +54,52 @@ class TemplateAdapterOperationsTest {
     }
 
     @Test
-    void modelEntityPropertiesMustNotBeNull() {
-        ModelEntity modelEntityUnderTest = new ModelEntity("id", 1, BigDecimal.TEN);
-
-        assertNotNull(modelEntityUnderTest.getId());
-        assertNotNull(modelEntityUnderTest.getCantidad());
-    }
-
-    @Test
+    @DisplayName("Debe guardar un reporte exitosamente")
     void testSave() {
-        when(customerTable.putItem(modelEntity)).thenReturn(CompletableFuture.runAsync(()->{}));
-        when(mapper.map(modelEntity, ModelEntity.class)).thenReturn(modelEntity);
-
         DynamoDBTemplateAdapter dynamoDBTemplateAdapter =
                 new DynamoDBTemplateAdapter(dynamoDbEnhancedAsyncClient, mapper);
 
-        StepVerifier.create(dynamoDBTemplateAdapter.save(modelEntity))
-                .expectNextCount(1)
+        when(mapper.map(reporte, ModelEntity.class)).thenReturn(modelEntity);
+        when(customerTable.putItem(modelEntity)).thenReturn(CompletableFuture.completedFuture(null));
+
+        Mono<Reporte> result = dynamoDBTemplateAdapter.guardar(reporte);
+
+        StepVerifier.create(result)
+                .expectNext(reporte)
                 .verifyComplete();
     }
 
     @Test
+    @DisplayName("Debe obtener un reporte por ID exitosamente")
     void testGetById() {
-        String id = "id";
-
-        when(customerTable.getItem(
-                Key.builder().partitionValue(AttributeValue.builder().s(id).build()).build()))
-                .thenReturn(CompletableFuture.completedFuture(modelEntity));
-        when(mapper.map(modelEntity, Object.class)).thenReturn("value");
-
         DynamoDBTemplateAdapter dynamoDBTemplateAdapter =
                 new DynamoDBTemplateAdapter(dynamoDbEnhancedAsyncClient, mapper);
 
-        StepVerifier.create(dynamoDBTemplateAdapter.getById("id"))
-                .expectNext("value")
+        String id = "id";
+        when(customerTable.getItem(any(Key.class))).thenReturn(CompletableFuture.completedFuture(modelEntity));
+        when(mapper.map(any(ModelEntity.class), any())).thenReturn(reporte);
+
+        Mono<Reporte> result = dynamoDBTemplateAdapter.getById(id);
+
+        StepVerifier.create(result)
+                .expectNext(reporte)
                 .verifyComplete();
     }
 
     @Test
+    @DisplayName("Debe eliminar un reporte exitosamente")
     void testDelete() {
-        when(mapper.map(modelEntity, ModelEntity.class)).thenReturn(modelEntity);
-        when(mapper.map(modelEntity, Object.class)).thenReturn("value");
-
-        when(customerTable.deleteItem(modelEntity))
-                .thenReturn(CompletableFuture.completedFuture(modelEntity));
-
         DynamoDBTemplateAdapter dynamoDBTemplateAdapter =
                 new DynamoDBTemplateAdapter(dynamoDbEnhancedAsyncClient, mapper);
 
-        StepVerifier.create(dynamoDBTemplateAdapter.delete(modelEntity))
-                .expectNext("value")
+        when(mapper.map(reporte, ModelEntity.class)).thenReturn(modelEntity);
+        when(customerTable.deleteItem(modelEntity)).thenReturn(CompletableFuture.completedFuture(modelEntity));
+        when(mapper.map(modelEntity, Reporte.class)).thenReturn(reporte);
+
+        Mono<Reporte> result = dynamoDBTemplateAdapter.delete(reporte);
+
+        StepVerifier.create(result)
+                .expectNext(reporte)
                 .verifyComplete();
     }
 }

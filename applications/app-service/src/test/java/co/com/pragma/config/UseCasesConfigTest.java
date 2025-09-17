@@ -1,6 +1,9 @@
 package co.com.pragma.config;
 
+import co.com.pragma.model.mensaje.gateway.MensajeUtilsGateway;
+import co.com.pragma.model.reporte.gateways.ReporteRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +37,12 @@ public class UseCasesConfigTest {
         public MyUseCase myUseCase() {
             return new MyUseCase();
         }
+
+        @Bean
+        public MensajeUtilsGateway mensajeUtilsGateway(){ return Mockito.mock(MensajeUtilsGateway.class); }
+
+        @Bean
+        public ReporteRepository reporteRepository(){ return Mockito.mock(ReporteRepository.class); }
     }
 
     static class MyUseCase {

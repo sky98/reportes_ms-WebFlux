@@ -1,4 +1,5 @@
 package co.com.pragma.model.reporte;
+
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -11,6 +11,10 @@ spring:
       path: "/h2"
   profiles:
     include: dev
+jwt:
+  secret: "${JWT_SECRET}"
+  expiration:
+    millis: 3600000
 entrypoint:
   sqs:
     region: "${AWS_REGION}"
