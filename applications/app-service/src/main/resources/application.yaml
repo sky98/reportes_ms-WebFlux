@@ -1,5 +1,5 @@
 server:
-  port: "${REPOR_PORT}"
+  port: ${REPOR_PORT}
 spring:
   application:
     name: "reportes"
