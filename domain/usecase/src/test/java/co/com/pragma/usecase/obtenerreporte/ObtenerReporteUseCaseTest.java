@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 
@@ -39,7 +40,7 @@ public class ObtenerReporteUseCaseTest {
     @Test
     @DisplayName("Debe devolver un reporte cuando la operacion es exitosa")
     void shouldReturnReporteWhenOperationIsSuccessful() {
-        when(reporteRepository.obtenerReportes()).thenReturn(Mono.just(reporte));
+        when(reporteRepository.obtenerReportes()).thenReturn(Mono.just(List.of(reporte)));
 
         Mono<Reporte> result = obtenerReporteUseCase.ejecutar();
 

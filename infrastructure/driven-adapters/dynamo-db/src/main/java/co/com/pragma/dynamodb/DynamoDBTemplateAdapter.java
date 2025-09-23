@@ -47,12 +47,12 @@ public class DynamoDBTemplateAdapter extends TemplateAdapterOperations<Reporte, 
     }
 
     @Override
-    public Mono<Reporte> obtenerReportes() {
+    public Mono<List<Reporte>> obtenerReportes() {
         return super.scan()
                 .flatMap(reportes -> {
                     return reportes.isEmpty()
-                            ? Mono.empty()
-                            : Mono.just(reportes.get(0));
+                            ? Mono.defer(()-> Mono.error(new ErrorPersistencia("Se presento un error al obtener los resportes", Set.of("No se encontraron reportee"))))
+                            : Mono.just(reportes);
                 });
     }
 

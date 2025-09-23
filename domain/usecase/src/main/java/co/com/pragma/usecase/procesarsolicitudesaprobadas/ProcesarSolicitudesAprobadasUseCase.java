@@ -20,7 +20,7 @@ public class ProcesarSolicitudesAprobadasUseCase {
                 .flatMap(solicitud ->
                         reporteRepository.obtenerReportes()
                                 .flatMap(reporte -> reporteRepository.guardar(
-                                        actualizarReporte(reporte, solicitud.getMonto())
+                                        actualizarReporte(reporte.getFirst(), solicitud.getMonto())
                                 ))
                 );
     }

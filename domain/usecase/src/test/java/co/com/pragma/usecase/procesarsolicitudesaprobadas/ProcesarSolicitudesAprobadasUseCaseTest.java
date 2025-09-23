@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -64,7 +65,7 @@ public class ProcesarSolicitudesAprobadasUseCaseTest {
         when(mensajeUtilsGateway.deserializarMensaje(eq(messageBody), eq(SolicitudAprobadaMensaje.class)))
                 .thenReturn(Mono.just(solicitudAprobadaMensaje));
         when(reporteRepository.obtenerReportes())
-                .thenReturn(Mono.just(reporteExistente));
+                .thenReturn(Mono.just(List.of(reporteExistente)));
         when(reporteRepository.guardar(any(Reporte.class)))
                 .thenReturn(Mono.just(reporteActualizado));
 
@@ -113,7 +114,7 @@ public class ProcesarSolicitudesAprobadasUseCaseTest {
         when(mensajeUtilsGateway.deserializarMensaje(any(), any()))
                 .thenReturn(Mono.just(solicitudAprobadaMensaje));
         when(reporteRepository.obtenerReportes())
-                .thenReturn(Mono.just(reporteExistente));
+                .thenReturn(Mono.just(List.of(reporteExistente)));
         when(reporteRepository.guardar(any(Reporte.class)))
                 .thenReturn(Mono.error(new RuntimeException("Error al guardar en DynamoDB")));
 

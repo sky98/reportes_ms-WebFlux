@@ -11,7 +11,8 @@ public class ObtenerReporteUseCase {
     private final ReporteRepository reporteRepository;
 
     public Mono<Reporte> ejecutar(){
-        return reporteRepository.obtenerReportes();
+        return reporteRepository.obtenerReportes()
+                .flatMap(reportes -> Mono.just(reportes.getFirst()));
     }
 
 }
