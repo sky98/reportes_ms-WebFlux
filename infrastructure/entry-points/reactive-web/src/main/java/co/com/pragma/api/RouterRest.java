@@ -1,5 +1,6 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.routers.GenerarReporteSolicitudesAprobadasPorFechaRouter;
 import co.com.pragma.api.routers.ObtenerReporteRouter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,11 +14,13 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class RouterRest {
 
     private final ObtenerReporteRouter obtenerReporteRouter;
+    private final GenerarReporteSolicitudesAprobadasPorFechaRouter generarReporteSolicitudesAprobadasPorFechaRouter;
 
     @Bean
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return RouterFunctions.route()
                 .add(obtenerReporteRouter.obtenerReporte())
+                .add(generarReporteSolicitudesAprobadasPorFechaRouter.obtenerReporte())
                 .build();
     }
 }
