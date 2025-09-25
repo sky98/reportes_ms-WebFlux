@@ -21,6 +21,7 @@ public class SecurityHeadersConfig {
 
     private final String PATH_SWAGGER = "/swagger-ui/**";
     private final String PATH_API_DOCS = "/v3/api-docs/**";
+    private final String PATH_GENERAR_REPORTE_APROBADAS_FECHA = "/api/v1/reportes/aprobadas/fecha";
 
     private final RequestTokenFilter requestTokenFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;
@@ -35,7 +36,8 @@ public class SecurityHeadersConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(
                                 PATH_SWAGGER,
-                                PATH_API_DOCS
+                                PATH_API_DOCS,
+                                PATH_GENERAR_REPORTE_APROBADAS_FECHA
                         ).permitAll()
                         .anyExchange().authenticated()
                 )

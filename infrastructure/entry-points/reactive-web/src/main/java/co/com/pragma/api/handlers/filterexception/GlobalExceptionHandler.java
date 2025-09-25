@@ -1,8 +1,10 @@
 package co.com.pragma.api.handlers.filterexception;
 
 import co.com.pragma.model.errores.ApplicationError;
+import co.com.pragma.model.errores.ErrorExterno;
 import co.com.pragma.model.errores.ErrorJwtExpirado;
 import co.com.pragma.model.errores.ErrorPersistencia;
+import co.com.pragma.model.errores.ErrorSQS;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -28,7 +30,9 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         this.objectMapper = objectMapper;
         this.handlers = Map.of(
                 ErrorJwtExpirado.class, this::handleApplicationError,
-                ErrorPersistencia.class, this::handleApplicationError
+                ErrorPersistencia.class, this::handleApplicationError,
+                ErrorSQS.class, this::handleApplicationError,
+                ErrorExterno.class, this::handleApplicationError
         );
     }
 

@@ -72,7 +72,7 @@ public class GenerarReporteSolicitudesAprobadasPorFechaRouter {
                     }
             )
     )
-    public RouterFunction<ServerResponse> obtenerReporte(){
+    public RouterFunction<ServerResponse> generarReporteSolicitudesAprobadasDiario(){
         return RouterFunctions.route(GET(PATH).and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), handler::ejecutar);
     }
 

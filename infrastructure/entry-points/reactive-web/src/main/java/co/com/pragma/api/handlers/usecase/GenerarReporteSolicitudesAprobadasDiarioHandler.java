@@ -10,7 +10,6 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
@@ -29,7 +28,7 @@ public class GenerarReporteSolicitudesAprobadasDiarioHandler {
                 .map(f -> LocalDate.parse(f, formatter))
                 .orElse(LocalDate.now());
         LocalDateTime inicioDelDia = fechaInicio.atStartOfDay();
-        LocalDateTime finDelDia = fechaFin.atTime(LocalTime.MAX);
+        LocalDateTime finDelDia = fechaFin.atTime(23, 59, 59);
         log.info("Iniciando flujo para generar reporte en las fechas : {} y {}", inicioDelDia, finDelDia);
         return useCase.ejecutar(inicioDelDia.toString(), finDelDia.toString())
                 .flatMap(response -> {

@@ -1,18 +1,19 @@
 package co.com.pragma.consumer;
 
-import lombok.Builder;
+import co.com.pragma.model.reportediario.ReporteDiario;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class ObjectResponse {
-
-    private String state;
-
+public class ReporteSolicitudesAprobadasResponse {
+    List<ReporteDiario> reporteDiarioList;
 }

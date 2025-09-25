@@ -20,7 +20,7 @@ public class RouterRest {
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return RouterFunctions.route()
                 .add(obtenerReporteRouter.obtenerReporte())
-                .add(generarReporteSolicitudesAprobadasPorFechaRouter.obtenerReporte())
+                .add(generarReporteSolicitudesAprobadasPorFechaRouter.generarReporteSolicitudesAprobadasDiario())
                 .build();
     }
 }

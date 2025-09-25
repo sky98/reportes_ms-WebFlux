@@ -15,9 +15,9 @@ import reactor.test.StepVerifier;
 import java.io.IOException;
 
 
-class RestConsumerTest {
+class SolicitudRestConsumerTest {
 
-    private static RestConsumer restConsumer;
+    private static SolicitudRestConsumer solicitudRestConsumer;
 
     private static MockWebServer mockBackEnd;
 
@@ -27,7 +27,7 @@ class RestConsumerTest {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
         var webClient = WebClient.builder().baseUrl(mockBackEnd.url("/").toString()).build();
-        restConsumer = new RestConsumer(webClient);
+        solicitudRestConsumer = new SolicitudRestConsumer(webClient);
     }
 
     @AfterAll
@@ -44,7 +44,7 @@ class RestConsumerTest {
                 .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .setResponseCode(HttpStatus.OK.value())
                 .setBody("{\"state\" : \"ok\"}"));
-        var response = restConsumer.testGet();
+        var response = solicitudRestConsumer.testGet();
 
         StepVerifier.create(response)
                 .expectNextMatches(objectResponse -> objectResponse.getState().equals("ok"))
@@ -59,7 +59,7 @@ class RestConsumerTest {
                 .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .setResponseCode(HttpStatus.OK.value())
                 .setBody("{\"state\" : \"ok\"}"));
-        var response = restConsumer.testPost();
+        var response = solicitudRestConsumer.testPost();
 
         StepVerifier.create(response)
                 .expectNextMatches(objectResponse -> objectResponse.getState().equals("ok"))
