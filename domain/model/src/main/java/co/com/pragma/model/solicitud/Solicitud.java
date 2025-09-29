@@ -1,4 +1,5 @@
 package co.com.pragma.model.solicitud;
+
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,6 @@ import java.math.BigDecimal;
 @Builder(toBuilder = true)
 public class Solicitud {
     private Long solicitudId;
-    private Long documentoId;
     private BigDecimal monto;
     private Long plazo;
     private String tipoPrestamo;

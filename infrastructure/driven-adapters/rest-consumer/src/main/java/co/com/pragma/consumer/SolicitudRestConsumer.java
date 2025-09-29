@@ -1,8 +1,12 @@
 package co.com.pragma.consumer;
 
+import co.com.pragma.model.errores.ErrorDeserializando;
 import co.com.pragma.model.errores.ErrorExterno;
 import co.com.pragma.model.reportediario.ReporteDiario;
 import co.com.pragma.model.solicitud.gateways.SolicitudRestConsumerGateway;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +23,7 @@ import java.util.Set;
 public class SolicitudRestConsumer implements SolicitudRestConsumerGateway {
 
     private final WebClient client;
+    private final ObjectMapper mapper;
     private final String PATH_OBTENER_SOLICITUDES_APROBADAS_POR_FECHA = "/api/v1/solicitudes/aprobadas/fecha";
 
     @Override
@@ -27,10 +32,16 @@ public class SolicitudRestConsumer implements SolicitudRestConsumerGateway {
         log.info("Obteniendo solicitudes aprobadas en las fechas {}, {}", fechaInicio, fechaFin);
         return client
                 .get()
-                .uri(PATH_OBTENER_SOLICITUDES_APROBADAS_POR_FECHA)
+                .uri(
+                        uriBuilder -> uriBuilder
+                                .path(PATH_OBTENER_SOLICITUDES_APROBADAS_POR_FECHA)
+                                .queryParam("fechaInicio", fechaInicio.substring(0,10))
+                                .queryParam("fechaFin", fechaFin.substring(0,10))
+                                .build()
+                )
                 .retrieve()
-                .bodyToMono(ReporteSolicitudesAprobadasResponse.class)
-                .map(ReporteSolicitudesAprobadasResponse::getReporteDiarioList);
+                .bodyToMono(String.class)
+                .flatMap(bodyString -> deserializarMensaje(bodyString, new TypeReference<List<ReporteDiario>>() {}));
     }
 
     private Mono<ReporteDiario> obtenerSolicitudesAprobadasPorFechaFallBack(Throwable throwable){
@@ -38,5 +49,13 @@ public class SolicitudRestConsumer implements SolicitudRestConsumerGateway {
         return Mono.defer(()-> Mono.error(new ErrorExterno("Se ha generado un error al obtener las soicitudes aprobadas por fecha.", Set.of(throwable.getMessage()))));
     }
 
+    private <T> Mono<T> deserializarMensaje(String messageBody, TypeReference<T> targetType) {
+        log.info("Procesando respuesta del servicio externo.");
+        try {
+            return Mono.just(mapper.readValue(messageBody, targetType));
+        } catch (JsonProcessingException e) {
+            return Mono.defer(() -> Mono.error(new ErrorDeserializando("Error al procesar la respuesta del servicio externo." + e.getMessage(), Set.of(e.getMessage()))));
+        }
+    }
 
 }
